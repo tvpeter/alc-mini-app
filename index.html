@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+    <title>Mini App</title>
+
+    <style>
+      body {
+        background: lavender;
+        margin: 0;
+        overflow: hidden;
+      }
+
+      div.user-photo {
+        width: 150px;
+        height: 150px;
+        margin: 1em auto;
+        background: #fff;
+        border-radius: 50%;
+        position: relative;
+        overflow: hidden;
+      }
+      .user-photo img {
+        width: 100%;
+        border-radius: 150px;
+        height: 100%;
+        display: block;
+      }
+
+      div.details {
+        font-size: 2.3em;
+        margin: 2.5em 0.2em 0.2em 0.2em;
+        color: #fff;
+        padding: 1.1em;
+        min-height: 6em;
+        background-color: #6200ee;
+      }
+
+      footer {
+        width: calc(100% - 2em);
+        z-index: 500;
+        position: absolute;
+        bottom: 0;
+        overflow: hidden;
+        display: flex;
+        justify-content: space-between;
+        margin: 0 1em;
+      }
+
+      footer button.mdc-icon-button {
+        margin: 0.5em;
+        color: #fff;
+      }
+      #title {
+        position: relative;
+        text-align: center;
+        margin-bottom: 3em;
+        text-transform: capitalize;
+      }
+    </style>
+  </head>
+  <body>
+    <h2 id="title">Mr. Tyonum Peter</h2>
+    <div class="user-photo mdc-elevation--z3">
+      <img src="https://via.placeholder.com/150" alt="image alt" />
+    </div>
+    <div class="details mdc-elevation--z3"></div>
+    <div class="messages"></div>
+    <footer>
+      <button class="mdc-icon-button material-icons" id="btn-address">
+        room
+      </button>
+      <button class="mdc-icon-button material-icons" id="btn-phone">
+        phone
+      </button>
+      <button class="mdc-icon-button material-icons" id="btn-birthdate">
+        event
+      </button>
+    </footer>
+
+    <script>
+      const notify = msg => {
+        const toastr = document.querySelector(".messages");
+        if (!toastr) return;
+
+        toastr.textContent = msg;
+        if (!toastr.classList.contains("on")) {
+          toastr.classList.add("on");
+        }
+      };
+
+      const clearNotice = () => {
+        const toastr = document.querySelector(".messages");
+        if (!toastr) return;
+
+        toastr.textContent = "";
+        toastr.classList.remove("on");
+      };
+
+      const displayUserPhotoAndName = data => {
+        if (!data) return;
+
+        // add your code here
+        const { results } = data;
+        const [profile] = results;
+
+        clearNotice();
+        const heading = document.getElementById("title");
+        heading.textContent = `${profile.name.title} ${profile.name.last} ${
+          profile.name.first
+        }`;
+
+        const userPhoto = document.querySelector(".user-photo img");
+        userPhoto.src = `${profile.picture.large}`;
+        userPhoto.alt = `${profile.name.last} ${profile.name.first}`;
+
+        displayExtraUserInfo(profile);
+      };
+
+      const getAUserProfile = async () => {
+        const api = "https://randomuser.me/api/";
+        notify(`requesting profile data ...`);
+
+        // make API call here
+        try {
+          const response = await fetch(api);
+          const result = await response.json();
+
+          displayUserPhotoAndName(result);
+        } catch (error) {
+          console.error(`Error loading profile data ${error}`);
+        }
+      };
+
+      const userDetails = document.querySelector(".details");
+      const setText = txt => {
+        userDetails.textContent = txt;
+      };
+
+      const displayBirthdate = ({ dob }) => {
+        const txt = `${dob.age} years old`;
+        setText(txt);
+      };
+
+      const displayPhone = ({ phone, cell }) => {
+        txt = `${phone} / ${cell}`;
+        setText(txt);
+      };
+
+      const displayAddress = ({ location }) => {
+        txt = `${location.street}, ${location.city}, ${location.state}`;
+        setText(txt);
+      };
+
+      const displayExtraUserInfo = user => {
+        const birthdateBtn = document.getElementById("btn-birthdate");
+        birthdateBtn.addEventListener("click", () => {
+          displayBirthdate(user);
+        });
+
+        const phoneBtn = document.getElementById("btn-phone");
+        phoneBtn.addEventListener("click", () => {
+          displayPhone(user, user);
+        });
+
+        const addressBtn = document.getElementById("btn-address");
+
+        addressBtn.addEventListener("click", () => {
+          displayAddress(user);
+        });
+      };
+      const startApp = () => {
+        // invoke the getAUserProfile here
+        getAUserProfile();
+      };
+
+      startApp();
+    </script>
+  </body>
+</html>
