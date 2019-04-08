@@ -82,8 +82,9 @@
     </footer>
 
     <script>
+      const toastr = document.querySelector(".messages");
+
       const notify = msg => {
-        const toastr = document.querySelector(".messages");
         if (!toastr) return;
 
         toastr.textContent = msg;
@@ -93,7 +94,6 @@
       };
 
       const clearNotice = () => {
-        const toastr = document.querySelector(".messages");
         if (!toastr) return;
 
         toastr.textContent = "";
@@ -107,7 +107,6 @@
         const { results } = data;
         const [profile] = results;
 
-        clearNotice();
         const heading = document.getElementById("title");
         heading.textContent = `${profile.name.title} ${profile.name.last} ${
           profile.name.first
@@ -117,6 +116,7 @@
         userPhoto.src = `${profile.picture.large}`;
         userPhoto.alt = `${profile.name.last} ${profile.name.first}`;
 
+        clearNotice();
         displayExtraUserInfo(profile);
       };
 
@@ -128,7 +128,6 @@
         try {
           const response = await fetch(api);
           const result = await response.json();
-
           displayUserPhotoAndName(result);
         } catch (error) {
           console.error(`Error loading profile data ${error}`);
