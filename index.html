@@ -130,7 +130,7 @@
           const result = await response.json();
           displayUserPhotoAndName(result);
         } catch (error) {
-          console.error(`Error loading profile data ${error}`);
+          notify(`Error getting profile data ${error}`);
         }
       };
 
